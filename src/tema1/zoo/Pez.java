@@ -40,4 +40,8 @@ public class Pez extends Animal {
 				+ especie + ", edad=" + edad + ", peso=" + peso + ", longitud=" + longitud + "]";
 	}
 	
+	public void hablar() {
+		System.out.println("glu glu");
+	}
+	
 }

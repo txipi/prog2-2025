@@ -28,4 +28,8 @@ public class Reptil extends Animal {
 				+ ", peso=" + peso + ", longitud=" + longitud + "]";
 	}
 
+	public void hablar() {
+		System.out.println("sss sss");
+	}
+	
 }

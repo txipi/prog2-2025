@@ -2,7 +2,7 @@ package tema1.zoo;
 
 import java.util.Objects;
 
-public class Animal {
+public abstract class Animal {
 	// Atributos
 	protected String nombre;
 	protected String especie;
@@ -91,6 +91,24 @@ public class Animal {
 		return Objects.equals(especie, other.especie) && Objects.equals(nombre, other.nombre);
 	}
 	
+	/*
+	 * Esto no es una buena idea porque implica
+	 * ACOPLAMIENTO entre Animal y sus clases hijas
+	 * (cuando creamos una nueva clase hija, tenemos
+	 * que venir a este método y actualizarlo)
+	public void hablar() {
+		if (this instanceof Ave) {
+			System.out.println("pio pio");
+		} else if (this instanceof Pez) {
+			System.out.println("glu glu");
+		} else if (this instanceof Reptil) {
+			System.out.println("sss sss");
+		} else if (this instanceof Mamifero) {
+			System.out.println("grrrr");
+		}
+	}
+	*/
 	
+	public abstract void hablar();
 	
 }

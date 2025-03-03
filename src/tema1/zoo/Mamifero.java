@@ -28,5 +28,7 @@ public class Mamifero extends Animal {
 				+ ", peso=" + peso + ", longitud=" + longitud + "]";
 	}
 	
-	
+	public void hablar() {
+		System.out.println("grrrr");
+	}
 }
