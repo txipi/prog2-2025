@@ -3,7 +3,7 @@ package tema1.openjai;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Proyecto {
+public class Proyecto implements Financiable {
 	protected String nombre;
 	protected double horas;
 	protected double coste;
@@ -81,6 +81,20 @@ public class Proyecto {
 			return false;
 		Proyecto other = (Proyecto) obj;
 		return Objects.equals(nombre, other.nombre);
+	}
+
+	@Override
+	public void financiar(double cantidad) {
+		this.coste = this.coste - cantidad;
+		Departamento dep = this.responsable.getDepartamento();
+		
+		if (dep == Departamento.MEDICINA) {
+			this.coste = this.coste * 0.90;
+		} else if (dep == Departamento.EDUCACION) {
+			this.coste = this.coste * 0.80;
+		} else if (dep == Departamento.MARKETING || dep == Departamento.FINANZAS) {
+			this.coste = this.coste * 0.85;
+		}
 	}
 	
 	

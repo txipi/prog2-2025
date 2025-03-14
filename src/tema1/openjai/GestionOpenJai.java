@@ -1,4 +1,4 @@
-package openjai;
+package tema1.openjai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +64,27 @@ public class GestionOpenJai {
 			Proyecto proyecto = new Proyecto(nombre, horas, coste, resp, des);
 			proyectos.add(proyecto);
 		} 
+		
+		actualizarHorasDesarrolladores(proyectos);
+		
+		for (int i = 0; i < 5; i++) {
+			proyectos.get(i).financiar(100);
+		}
 	}
 
+	public static void actualizarHorasDesarrolladores(ArrayList<Proyecto> proyectos) {
+		for (Proyecto proyecto : proyectos) {
+			for (Desarrollador desarrollador : proyecto.getDesarrolladores()) {
+				double asignar = proyecto.getHoras()/proyecto.getDesarrolladores().size();
+				double tiene = desarrollador.getHoras();
+				double disponibles = tiene - asignar;
+				desarrollador.setHoras(disponibles);
+				if (disponibles  < 0) {
+					System.out.println("Atención, el desarrollador " + desarrollador.getNombre() +
+							" tiene " + disponibles + " horas disponibles");
+				}
+			}
+		}
+	}
+	
 }
