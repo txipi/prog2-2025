@@ -51,6 +51,31 @@ public class Reto extends Evento {
 				+ ", fecha=" + fecha + ", equipos=" + equipos + "]";
 	}
 
+	@Override
+	public Equipo getGanador() {
+		Equipo mayor = this.equipos.get(0);
+		int totalMayor = 0;
+		
+		for (Equipo equipo : equipos) {
+			int totalEquipo = 0;
+			// Calculamos los puntos absolutos de este equipo
+			for (Partida partida : partidas) {
+				if (partida.getLocal().equals(equipo)) {
+					totalEquipo += partida.getPuntosLocal() - partida.getPuntosVisitante();
+				} else if (partida.getVisitante().equals(equipo)) {
+					totalEquipo += partida.getPuntosVisitante() - partida.getPuntosLocal();
+				}
+			}
+			
+			if (totalEquipo > totalMayor) {
+				totalMayor = totalEquipo;
+				mayor = equipo;
+			}
+		}
+		
+		return mayor;
+	}
+
 	
 	
 }

@@ -3,7 +3,7 @@ package tema1.esports;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Equipo {
+public class Equipo implements Comparable<Equipo> {
 	protected String nombre;
 	protected Region region;
 	ArrayList<Jugador> jugadores;
@@ -60,6 +60,21 @@ public class Equipo {
 			return false;
 		Equipo other = (Equipo) obj;
 		return Objects.equals(nombre, other.nombre);
+	}
+
+	int getTotal() {
+		int resultado = 0;
+	
+		for (Jugador jugador : jugadores) {
+			resultado += jugador.getReflejos() + jugador.getResistencia() + jugador.getHabilidad();
+		}
+		
+		return resultado;
+	}
+	
+	@Override
+	public int compareTo(Equipo other) {
+		return this.getTotal() - other.getTotal();
 	}
 	
 	

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Evento {
+public abstract class Evento {
 	protected String nombre;
 	protected LocalDateTime fecha;
 	protected ArrayList<Equipo> equipos;
@@ -66,5 +66,5 @@ public class Evento {
 		return Objects.equals(fecha, other.fecha) && Objects.equals(nombre, other.nombre);
 	}
 	
-	
+	public abstract Equipo getGanador();
 }

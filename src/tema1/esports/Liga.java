@@ -23,8 +23,29 @@ public class Liga extends Evento {
 	public String toString() {
 		return "Liga [partidas=" + partidas + ", nombre=" + nombre + ", fecha=" + fecha + ", equipos=" + equipos + "]";
 	}
-	
-	
+
+	@Override
+	public Equipo getGanador() {
+		Equipo mayor = this.equipos.get(0);
+		int victoriasMayor = 0;
+		
+		for (Equipo equipo : equipos) {
+			int victoriasEquipo = 0;
+			// Calculamos las victorias de este equipo
+			for (Partida partida : partidas) {
+				if (partida.getLocal().equals(equipo) && partida.getPuntosLocal() > partida.getPuntosVisitante() || partida.getVisitante().equals(equipo) && partida.getPuntosLocal() < partida.getPuntosVisitante()) {
+					victoriasEquipo++;
+				}
+			}
+			
+			if (victoriasEquipo > victoriasMayor) {
+				victoriasMayor = victoriasEquipo;
+				mayor = equipo;
+			}
+		}
+		
+		return mayor;
+	}
 	
 	
 }

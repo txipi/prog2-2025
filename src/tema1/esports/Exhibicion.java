@@ -24,6 +24,15 @@ public class Exhibicion extends Evento {
 		return "Exhibicion [partida=" + partida + ", nombre=" + nombre + ", fecha=" + fecha + ", equipos=" + equipos
 				+ "]";
 	}
+
+	@Override
+	public Equipo getGanador() {
+		if (partida.getPuntosLocal() > partida.getPuntosVisitante()) {
+			return partida.getLocal();
+		} else {
+			return partida.getVisitante();
+		}
+	}
 	
 	
 }
