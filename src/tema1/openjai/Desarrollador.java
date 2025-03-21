@@ -2,7 +2,7 @@ package tema1.openjai;
 
 import java.util.ArrayList;
 
-public class Desarrollador extends Empleado {
+public class Desarrollador extends Empleado implements Comparable<Desarrollador> {
 	protected ArrayList<Lenguaje> lenguajes;
 	protected double horas;
 
@@ -31,6 +31,12 @@ public class Desarrollador extends Empleado {
 	@Override
 	public String toString() {
 		return "Desarrollador [lenguajes=" + lenguajes + ", horas=" + horas + ", nombre=" + nombre + ", id=" + id + "]";
+	}
+
+	@Override
+	public int compareTo(Desarrollador other) {
+		return (int) (this.horas - other.horas);
+		//return this.lenguajes.size() - other.lenguajes.size();
 	}
 	
 }

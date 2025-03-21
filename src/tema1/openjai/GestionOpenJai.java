@@ -2,6 +2,7 @@ package tema1.openjai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class GestionOpenJai {
 
@@ -70,6 +71,10 @@ public class GestionOpenJai {
 		for (int i = 0; i < 5; i++) {
 			proyectos.get(i).financiar(100);
 		}
+		
+		System.out.println(desarrolladores);
+		Collections.sort(desarrolladores);
+		System.out.println(desarrolladores);
 	}
 
 	public static void actualizarHorasDesarrolladores(ArrayList<Proyecto> proyectos) {
