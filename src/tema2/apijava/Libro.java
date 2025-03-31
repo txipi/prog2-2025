@@ -2,7 +2,7 @@ package tema2.apijava;
 
 import java.util.Comparator;
 
-public class Libro implements Comparable<Libro> {
+public class Libro implements Comparable<Libro>, Cloneable {
 	private String titulo;
 	private String autoria;
 	private int anyo;
@@ -110,5 +110,9 @@ public class Libro implements Comparable<Libro> {
 		// return this.titulo.compareTo(other.titulo); Ordenacion por titulo
 		return other.autoria.compareTo(this.autoria); // Ordenacion por autoria decreciente
 	}
-	
+
+	@Override
+    protected Object clone() throws CloneNotSupportedException {
+        return new Libro(this.titulo, this.autoria, this.anyo, this.precio, this.isbn);
+    }
 }
