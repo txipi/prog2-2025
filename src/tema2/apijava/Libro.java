@@ -1,13 +1,16 @@
 package tema2.apijava;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 
-public class Libro implements Comparable<Libro>, Cloneable {
+public class Libro implements Comparable<Libro>, Cloneable, Iterable<Genero> {
 	private String titulo;
 	private String autoria;
 	private int anyo;
 	private double precio;
 	private int isbn;
+	private ArrayList<Genero> generos;
 
 	/**
 	 * Constructor con argumentos
@@ -25,7 +28,30 @@ public class Libro implements Comparable<Libro>, Cloneable {
 		this.anyo = anyo;
 		this.precio = precio;
 		this.isbn = isbn;
+		this.generos = new ArrayList<Genero>();
 	}
+
+	
+
+	/**
+	 * @param titulo
+	 * @param autoria
+	 * @param anyo
+	 * @param precio
+	 * @param isbn
+	 * @param generos
+	 */
+	public Libro(String titulo, String autoria, int anyo, double precio, int isbn, ArrayList<Genero> generos) {
+		super();
+		this.titulo = titulo;
+		this.autoria = autoria;
+		this.anyo = anyo;
+		this.precio = precio;
+		this.isbn = isbn;
+		this.generos = generos;
+	}
+
+
 
 	/**
 	 * @return the titulo
@@ -97,11 +123,33 @@ public class Libro implements Comparable<Libro>, Cloneable {
 		this.isbn = isbn;
 	}
 
+	
+
+	/**
+	 * @return the generos
+	 */
+	public ArrayList<Genero> getGeneros() {
+		return generos;
+	}
+
+
+
+	/**
+	 * @param generos the generos to set
+	 */
+	public void setGeneros(ArrayList<Genero> generos) {
+		this.generos = generos;
+	}
+
+
+
 	@Override
 	public String toString() {
 		return "Libro [titulo=" + titulo + ", autoria=" + autoria + ", anyo=" + anyo + ", precio=" + precio + ", isbn="
-				+ isbn + "]";
+				+ isbn + ", generos=" + generos + "]";
 	}
+
+
 
 	@Override
 	public int compareTo(Libro other) {
@@ -113,6 +161,17 @@ public class Libro implements Comparable<Libro>, Cloneable {
 
 	@Override
     protected Object clone() throws CloneNotSupportedException {
-        return new Libro(this.titulo, this.autoria, this.anyo, this.precio, this.isbn);
+		ArrayList<Genero> generos = new ArrayList<Genero>();
+		for (Genero genero : this.generos) {
+			generos.add(genero);
+		}
+        return new Libro(this.titulo, this.autoria, this.anyo, this.precio, this.isbn, generos);
     }
+
+
+
+	@Override
+	public Iterator<Genero> iterator() {
+		return this.generos.iterator();
+	}
 }
