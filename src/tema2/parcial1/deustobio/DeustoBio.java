@@ -1,13 +1,13 @@
-package deustobio;
+package tema2.parcial1.deustobio;
 
 import java.util.ArrayList;
 
-import deustobio.fenomenos.Continentes;
-import deustobio.fenomenos.FenomenoNatural;
-import deustobio.fenomenos.Incendio;
-import deustobio.fenomenos.Terremoto;
-import deustobio.fenomenos.Terrestre;
-import deustobio.fenomenos.Tsunami;
+import tema2.parcial1.deustobio.fenomenos.Continentes;
+import tema2.parcial1.deustobio.fenomenos.FenomenoNatural;
+import tema2.parcial1.deustobio.fenomenos.Incendio;
+import tema2.parcial1.deustobio.fenomenos.Terremoto;
+import tema2.parcial1.deustobio.fenomenos.Terrestre;
+import tema2.parcial1.deustobio.fenomenos.Tsunami;
 
 public class DeustoBio {
 

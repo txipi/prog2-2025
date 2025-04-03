@@ -1,4 +1,4 @@
-package deustobio;
+package tema2.parcial1.deustobio;
 
 public interface Predecible {
 	boolean isAlarma();

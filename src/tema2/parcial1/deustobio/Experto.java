@@ -1,10 +1,10 @@
-package deustobio;
+package tema2.parcial1.deustobio;
 
 import java.util.ArrayList;
 
-import deustobio.fenomenos.Continentes;
-import deustobio.fenomenos.FenomenoNatural;
-import deustobio.fenomenos.Terrestre;
+import tema2.parcial1.deustobio.fenomenos.Continentes;
+import tema2.parcial1.deustobio.fenomenos.FenomenoNatural;
+import tema2.parcial1.deustobio.fenomenos.Terrestre;
 
 public class Experto {
 	private String nombre;
