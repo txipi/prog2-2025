@@ -2,12 +2,8 @@ package tema2.parcial1.deustobio;
 
 import java.util.ArrayList;
 
-import tema2.parcial1.deustobio.fenomenos.Continentes;
-import tema2.parcial1.deustobio.fenomenos.FenomenoNatural;
-import tema2.parcial1.deustobio.fenomenos.Incendio;
-import tema2.parcial1.deustobio.fenomenos.Terremoto;
-import tema2.parcial1.deustobio.fenomenos.Terrestre;
-import tema2.parcial1.deustobio.fenomenos.Tsunami;
+import tema2.parcial1.deustobio.*;
+import tema2.parcial1.deustobio.fenomenos.*;
 
 public class DeustoBio {
 
@@ -111,11 +107,35 @@ public class DeustoBio {
 		int contador = 0;
 		
 		for (Experto experto : listaExpertos) {
+			ArrayList<FenomenoNatural> fenomenosBorrar = new ArrayList<FenomenoNatural>();
 			for (FenomenoNatural fenomeno : experto.getFenomenos()) {
 				if (fenomeno.getFecha().getMonthValue() == mes) {
 					// Borrar fenomeno
 					// experto.getFenomenos().remove(fenomeno); -> DA ERROR
+					fenomenosBorrar.add(fenomeno);
 					contador++;
+				}
+			}
+			for (FenomenoNatural fenomeno : fenomenosBorrar) {
+				experto.getFenomenos().remove(fenomeno);
+			}
+		}
+		
+		return contador;
+	}
+
+	public static int eliminarFenomenosMeses2(int mes, ArrayList<Experto> listaExpertos) {
+		int contador = 0;
+		
+		for (Experto experto : listaExpertos) {
+			int i = 0;
+			while(i < experto.getFenomenos().size()) {
+				FenomenoNatural fenomeno = experto.getFenomenos().get(i);
+				if (fenomeno.getFecha().getMonthValue() == mes) {
+					experto.getFenomenos().remove(fenomeno);
+					contador++;
+				} else {
+					i++;
 				}
 			}
 		}
@@ -123,6 +143,7 @@ public class DeustoBio {
 		return contador;
 	}
 
+	
 	private static double calcularHectareasAfectadas(ArrayList<Experto> listaExpertos) {
 		double total = 0;
 		
