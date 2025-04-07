@@ -1,15 +1,15 @@
 package tema3.colecciones;
 
-public class Viajero {
+import java.util.Objects;
+
+public class Viajero implements Comparable<Viajero> {
 	protected String nombre;
 	protected String dni;
-	protected Prioridad prioridad;
 	
-	public Viajero(String nombre, String dni, Prioridad prioridad) {
+	public Viajero(String nombre, String dni) {
 		super();
 		this.nombre = nombre;
 		this.dni = dni;
-		this.prioridad = prioridad;
 	}
 
 	public String getNombre() {
@@ -28,20 +28,32 @@ public class Viajero {
 		this.dni = dni;
 	}
 
-	public Prioridad getPrioridad() {
-		return prioridad;
-	}
-
-	public void setPrioridad(Prioridad prioridad) {
-		this.prioridad = prioridad;
+	@Override
+	public String toString() {
+		return "Viajero [nombre=" + nombre + ", dni=" + dni + "]";
 	}
 
 	@Override
-	public String toString() {
-		return "Viajero [nombre=" + nombre + ", dni=" + dni + ", prioridad=" + prioridad + "]";
+	public int hashCode() {
+		return Objects.hash(dni);
 	}
 
-	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Viajero other = (Viajero) obj;
+		return Objects.equals(dni, other.dni);
+	}
+
+	@Override
+	public int compareTo(Viajero other) {
+		return this.dni.compareTo(other.dni);
+	}
 	
 	
 }
