@@ -1,8 +1,11 @@
 package tema3.colecciones;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeSet;
 
 public class Ejercicios {
 
@@ -120,7 +123,136 @@ public class Ejercicios {
 		// Parentesis
 		boolean correcta = parentesis("((3+4)+1)+((4+7))");
 		
+		// Conjunto de Viajeros
+		HashSet<Viajero> conjuntoViajeros = new HashSet<Viajero>();
+		
+		conjuntoViajeros.add(new Viajero("Pablo", "12345678Z"));
+		conjuntoViajeros.add(new Viajero("Kepa", "12345678Z"));
+		
+		System.out.println(conjuntoViajeros);
+		
+		Viajero v1 = new Viajero("Pablo", "1");
+		Viajero v2 = new Viajero("Laura", "2");
+		Viajero v3 = new Viajero("Mikel", "99");
+		Viajero v4 = new Viajero("Kepa", "100");
+		
+		System.out.println(v1.hashCode());
+		System.out.println(v2.hashCode());
+		System.out.println(v3.hashCode());
+		System.out.println(v4.hashCode());
+		
+		conjuntoViajeros.add(v1);
+		conjuntoViajeros.add(v2);
+		conjuntoViajeros.add(v3);
+		conjuntoViajeros.add(v4);
+		
+		System.out.println(conjuntoViajeros);
+		
+		// Conjunto ORDENADO de viajeros
+		TreeSet<Viajero> conjuntoViajerosOrdenado = new TreeSet<Viajero>();
+		
+		conjuntoViajerosOrdenado.add(v1);
+		conjuntoViajerosOrdenado.add(v2);
+		conjuntoViajerosOrdenado.add(v3);
+		conjuntoViajerosOrdenado.add(v4);
+		
+		System.out.println(conjuntoViajerosOrdenado);
+		
+		// Mapa de Strings y enteros para guardar el stock de un supermercado
+		
+		HashMap<String, Integer> stock = new HashMap<>();
+		
+		stock.put("tomates", 17);
+		stock.put("huevos", 23);
+		stock.put("leche", 12);
+		
+		/*
+		 * for clave in diccionario:
+		 *     valor = diccionario[clave]
+		 */
+		
+		for (String clave : stock.keySet()) {
+			int valor = stock.get(clave);
+			System.out.println(clave + " -> " + valor);
+		}
+		
+		System.out.println("Imprimiendo el mapa con for-map");
+		
+		for (Map.Entry<String, Integer> entry : stock.entrySet()) {
+			String key = entry.getKey();
+			Integer val = entry.getValue();
+			System.out.println(key + " -> " + val);
+		}
+		
+		HashMap<String, Integer> frecuencias = cuentaLetras("sdfsfsfasdfsdf");
+		
+		System.out.println(frecuencias);
+		
+		// Contar viajeros
+		HashMap<Prioridad, Integer> freqViajeros = cuentaViajeros(colaViajerosPrioridad);
+		
+		// Clasificar viajeros
+		HashMap<Prioridad, ArrayList<Viajero>> clasViajeros = clasificaViajeros(colaViajerosPrioridad);
+		
 	}
+
+	public static HashMap<Prioridad, ArrayList<Viajero>> clasificaViajeros(
+			LinkedList<ViajeroPrioridad> colaViajerosPrioridad) {
+		HashMap<Prioridad, ArrayList<Viajero>> resultado = new HashMap<Prioridad, ArrayList<Viajero>>();
+
+		for (ViajeroPrioridad viajeroPrioridad : colaViajerosPrioridad) {
+			Prioridad prioridad = viajeroPrioridad.getPrioridad();
+			
+			if (!resultado.containsKey(prioridad)) {
+				// Crear la lista asociada a esta prioridad
+				resultado.put(prioridad, new ArrayList<Viajero>());
+			} 
+			// Añadir el viajero a la lista
+			resultado.get(prioridad).add(viajeroPrioridad);
+		}
+		
+		return resultado;
+	}
+
+	public static HashMap<Prioridad, Integer> cuentaViajeros(LinkedList<ViajeroPrioridad> colaViajerosPrioridad) {
+		HashMap<Prioridad, Integer> resultado = new HashMap<Prioridad, Integer>();
+
+		for (ViajeroPrioridad viajeroPrioridad : colaViajerosPrioridad) {
+			Prioridad prioridad = viajeroPrioridad.getPrioridad();
+			
+			if (resultado.containsKey(prioridad)) {
+				// Sumar 1
+				int valor = resultado.get(prioridad);
+				resultado.put(prioridad, valor + 1);
+			} else {
+				// Añadir esta prioridad al mapa
+				resultado.put(prioridad, 1);
+			}
+		}
+		
+		return resultado;
+	}
+
+	public static HashMap<String, Integer> cuentaLetras(String frase) {
+		HashMap<String, Integer> resultado = new HashMap<String, Integer>();
+		
+		// Dividimos la frase en letras
+		String[] letras = frase.split("");
+		
+		for (String letra : letras) {
+			if (resultado.containsKey(letra)) {
+				// Sumar 1
+				int valor = resultado.get(letra);
+				resultado.put(letra, valor + 1);
+			} else {
+				// Añadir esta letra al mapa
+				resultado.put(letra, 1);
+			}
+		}
+		
+		return resultado;
+	}
+
 
 	private static boolean parentesis(String expresion) {
 		String[] letras = expresion.split("");
