@@ -11,16 +11,55 @@ public class Principal {
 		System.out.println(libros);
 		
 		// Crear un mapa para contar cuántos libros hay de cada año
+		HashMap<Integer, Integer> mapaCuentaLibrosAnyo = cuentaLibrosAnyo(libros);
 		
 		// Crear un mapa para clasificar los libros por año
-		
+		HashMap<Integer, ArrayList<Libro>> mapaClasiLibrosAnyo = clasificaLibrosAnyo(libros);		
+
 		// Crear un mapa para contar cuántos libros hay de cada genero
+		HashMap<Genero, Integer> mapaCuentaLibrosGen = cuentaLibrosGenero(libros);
 		
 		// Crear un mapa para clasificar los libros por genero
-				
 	}
 
-	private static ArrayList<Libro> crearLibros() {
+	public static HashMap<Integer, ArrayList<Libro>> clasificaLibrosAnyo(ArrayList<Libro> libros) {
+		HashMap<Integer, ArrayList<Libro>> resultado = new HashMap<>();
+		
+		for (Libro libro : libros) {
+			int anyo = libro.getAnyo();
+			
+			// Nos aseguramos de que la lista de libros existe
+			if (!resultado.containsKey(anyo)) {
+				resultado.put(anyo, new ArrayList<Libro>());
+			}
+			
+			// Añadimos este libro a la lista correspondiente al año
+			resultado.get(anyo).add(libro);
+		}
+			
+		return resultado;
+	}
+
+	public static HashMap<Integer, Integer> cuentaLibrosAnyo(ArrayList<Libro> libros) {
+		HashMap<Integer, Integer> resultado = new HashMap<Integer, Integer>();
+		
+		for (Libro libro : libros) {
+			int anyo = libro.getAnyo();
+			
+			if (resultado.containsKey(anyo)) {
+				// Actualizar el contador
+				int valor = resultado.get(anyo);
+				resultado.put(anyo, valor + 1);
+			} else {
+				// Añadir el contador al mapa
+				resultado.put(anyo, 1);
+			}
+		}
+		
+		return resultado;
+	}
+
+	public static ArrayList<Libro> crearLibros() {
 		ArrayList<Libro> resultado = new ArrayList<Libro>();
 		
 		for (int i = 0; i < 50; i++) {
