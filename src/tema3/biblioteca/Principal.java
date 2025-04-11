@@ -12,14 +12,53 @@ public class Principal {
 		
 		// Crear un mapa para contar cuántos libros hay de cada año
 		HashMap<Integer, Integer> mapaCuentaLibrosAnyo = cuentaLibrosAnyo(libros);
+		System.out.println(mapaCuentaLibrosAnyo);
 		
 		// Crear un mapa para clasificar los libros por año
-		HashMap<Integer, ArrayList<Libro>> mapaClasiLibrosAnyo = clasificaLibrosAnyo(libros);		
+		HashMap<Integer, ArrayList<Libro>> mapaClasiLibrosAnyo = clasificaLibrosAnyo(libros);
+		System.out.println(mapaClasiLibrosAnyo);
 
 		// Crear un mapa para contar cuántos libros hay de cada genero
 		HashMap<Genero, Integer> mapaCuentaLibrosGen = cuentaLibrosGenero(libros);
+		System.out.println(mapaCuentaLibrosGen);
 		
 		// Crear un mapa para clasificar los libros por genero
+		HashMap<Genero, ArrayList<Libro>> mapaClasiLibrosGen = clasificarLibrosGenero(libros);
+		System.out.println(mapaClasiLibrosGen);
+	}
+
+	public static HashMap<Genero, ArrayList<Libro>> clasificarLibrosGenero(ArrayList<Libro> libros) {
+		HashMap<Genero, ArrayList<Libro>> resultado = new HashMap<Genero, ArrayList<Libro>>();
+		
+		for (Libro libro : libros) {
+			for (Genero genero : libro.getGeneros()) {
+				if (!resultado.containsKey(genero)) {
+					resultado.put(genero, new ArrayList<Libro>());
+				}
+				resultado.get(genero).add(libro);
+			}
+		}
+		
+		return resultado;
+	}
+
+	public static HashMap<Genero, Integer> cuentaLibrosGenero(ArrayList<Libro> libros) {
+		HashMap<Genero, Integer> resultado = new HashMap<Genero, Integer>();
+		
+		for (Libro libro : libros) {
+			for (Genero genero : libro.getGeneros()) {
+				if (resultado.containsKey(genero)) {
+					// Sumar 1 al contador
+					int valor = resultado.get(genero);
+					resultado.put(genero, valor + 1);
+				} else {
+					// Crear el contador
+					resultado.put(genero, 1);
+				}
+			}
+		}
+		
+		return resultado;
 	}
 
 	public static HashMap<Integer, ArrayList<Libro>> clasificaLibrosAnyo(ArrayList<Libro> libros) {
