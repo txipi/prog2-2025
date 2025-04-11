@@ -1,6 +1,7 @@
 package tema3.biblioteca;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Principal {
 
