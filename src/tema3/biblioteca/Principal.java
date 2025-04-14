@@ -1,7 +1,14 @@
 package tema3.biblioteca;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Principal {
 
@@ -25,6 +32,113 @@ public class Principal {
 		// Crear un mapa para clasificar los libros por genero
 		HashMap<Genero, ArrayList<Libro>> mapaClasiLibrosGen = clasificarLibrosGenero(libros);
 		System.out.println(mapaClasiLibrosGen);
+		
+		// Guardar la lista de libros en "biblioteca.csv"
+		guardarLibrosCSV(libros);
+		
+		// Leer una lista de libros desde "biblioteca.csv"
+		ArrayList<Libro> nueva = cargarLibrosCSV();
+		
+		// Guardar la lista de libros en "biblioteca.dat"
+		guardarLibrosBin(libros);
+		
+		// Leer una lista de libros desde "biblioteca.dat"
+		ArrayList<Libro> nueva2 = cargarLibrosBin();
+	}
+
+	private static ArrayList<Libro> cargarLibrosCSV() {
+		ArrayList<Libro> nueva = new ArrayList<Libro>();
+		
+		// Leer datos desde fichero de texto
+		try {
+			// Abrir el fichero
+			File fichero = new File("biblioteca.csv");
+			Scanner sc = new Scanner(fichero);
+			
+			// Leer el fichero
+			while (sc.hasNextLine()) {
+				String linea = sc.nextLine();
+				String[] campos = linea.split(";");
+				String titulo = campos[0];
+				String autoria = campos[1];
+				int anyo = Integer.parseInt(campos[2]);
+				double precio = Double.parseDouble(campos[3]);
+				int isbn = Integer.parseInt(campos[4]);
+				ArrayList<Genero> generos = new ArrayList<Genero>();
+				String[] gens = campos[5].split(",");
+				for (String g : gens) {
+					generos.add(Genero.valueOf(g));
+				}
+				
+				Libro libro = new Libro(titulo, autoria, anyo, precio, isbn, generos);
+				nueva.add(libro);
+			}
+			
+			// Cerrar el fichero
+			sc.close();
+		} catch (Exception e) {
+			System.err.println("Error al cargar datos desde biblioteca.csv");
+		}
+		
+		return nueva;
+	}
+
+	private static void guardarLibrosCSV(ArrayList<Libro> libros) {
+		// Escribir en un fichero de texto
+		try {
+			// Abrir/Crear fichero
+			PrintWriter pw = new PrintWriter("biblioteca.csv");
+			
+			// titulo;autoria;anyo;precio;isbn;genero1,genero2,genero3;
+			for (Libro libro : libros) {
+				String generos = "";
+				for (Genero genero : libro.getGeneros()) {
+					generos += genero + ",";
+				}
+				pw.println(libro.getTitulo()+";"+
+						libro.getAutoria()+";"+
+						libro.getAnyo()+";"+
+						libro.getPrecio()+";"+
+						libro.getIsbn()+";"+
+						generos);
+			}
+			
+			// Cerrar fichero
+			pw.close();
+		} catch (Exception e) {
+			System.err.println("Error al escribir en el fichero de biblioteca");
+		}
+	}
+
+
+
+	private static ArrayList<Libro> cargarLibrosBin() {
+		ArrayList<Libro> nueva = new ArrayList<Libro>();
+		// fis -> ois -> readObject
+		try {
+			FileInputStream fis = new FileInputStream("biblioteca.dat");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			nueva = (ArrayList<Libro>) ois.readObject();
+			ois.close();
+			fis.close();
+		} catch (Exception e) {
+			System.err.println("Error al leer el fichero biblioteca.dat");
+		}
+		return nueva;
+	}
+
+	private static void guardarLibrosBin(ArrayList<Libro> libros) {
+		// fos -> oos -> writeObject
+		try {
+			FileOutputStream fos = new FileOutputStream("biblioteca.dat");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(libros);
+			oos.close();
+			fos.close();
+		} catch (Exception e) {
+			System.out.println(e);
+			System.err.println("Error al escribir el fichero biblioteca.dat");
+		}
 	}
 
 	public static HashMap<Genero, ArrayList<Libro>> clasificarLibrosGenero(ArrayList<Libro> libros) {
