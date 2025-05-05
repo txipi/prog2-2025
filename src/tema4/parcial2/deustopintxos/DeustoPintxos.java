@@ -2,6 +2,7 @@ package tema4.parcial2.deustopintxos;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,61 +13,62 @@ public class DeustoPintxos {
 	
 	// TAREA 1A: cargarProductosCSV
 	private static Set<Producto> cargarProductosCSV() {
-		Set<Producto> productos = new HashSet<Producto>();
-
+		HashSet<Producto> resultado = new HashSet<Producto>();
+		
+		// Leer datos desde fichero de texto
 		try {
-			File f = new File("deustopintxos.csv");
-			Scanner sc = new Scanner(f);
+			// Abrir el fichero
+			File fichero = new File("deustopintxos.csv");
+			Scanner sc = new Scanner(fichero);
 			
+			// Leer el fichero
 			while (sc.hasNextLine()) {
 				String linea = sc.nextLine();
 				String[] campos = linea.split(",");
-				Producto producto;
-				
+				String tipo = campos[0];
+
 				String nombre = campos[1];
 				double precio = Double.parseDouble(campos[2]);
 				
-				if (campos[0].equals("Bebida")) {
-					double alcohol = Double.parseDouble(campos[3]);
-					producto = new Bebida(nombre, precio, alcohol);
+				if (tipo.equals("Bebida")) {
+					// Creamos una bebida
+					double grados = Double.parseDouble(campos[3]);
+					Bebida bebida = new Bebida(nombre, precio, grados);
+					resultado.add(bebida);
 				} else {
+					// Creamos un pintxo
 					boolean caliente = Boolean.parseBoolean(campos[3]);
-					producto = new Pintxo(nombre, precio, caliente);
+					Pintxo pintxo = new Pintxo(nombre, precio, caliente);
+					resultado.add(pintxo);
 				}
-				
-				productos.add(producto);
 			}
 			
+			// Cerrar el fichero
 			sc.close();
 		} catch (Exception e) {
-			System.err.println("Error al leer deustopintxos.csv");
+			System.err.println("Error al cargar datos desde deustopintxos.csv");
 		}
 		
-		return productos;
+		return resultado;
 	}
 	
 	// TAREA 1B: generarPedidos
 	private static void generarPedidos(Set<Producto> productos, List<Bar> bares) {
-		ArrayList<Producto> listaProductos = new ArrayList(productos);
-		
+		ArrayList<Producto> lista = new ArrayList(productos);
 		for (Bar bar : bares) {
 			for (Dia dia : Dia.values()) {
 				for (int i = 0; i < 100; i++) {
 					// Crear un pedido
-					HashMap<Producto, Integer> mapaProducto = new HashMap<Producto, Integer>();
-					
-					//for (int j = 0; j < 5; j++) {
-					while (mapaProducto.size() < 5) {
-						// Elegir un producto
-						int pos = (int) (Math.random() * listaProductos.size());
-						Producto producto = listaProductos.get(pos);
-						
-						// Añadirlo al mapa
-						int aleaInt = (int) (Math.random() * (5 - 1)) + 1;
-						mapaProducto.put(producto, aleaInt);
+					int codigo = (int) (Math.random() * 1000000);
+					HashMap<Producto, Integer> prods = new HashMap<>();
+					// Añadir 5 productos aleatorios de lista a prods
+					for (int j = 0; j < 5; j++) {
+						int pos = (int) (Math.random() * lista.size());
+						Producto producto = lista.get(pos);
+						prods.put(producto, 5);						
 					}
 					
-					Pedido pedido = new Pedido(i, dia, mapaProducto);
+					Pedido pedido = new Pedido(codigo, dia, prods);
 					// Añadir el pedido al bar
 					bar.getPedidos().add(pedido);
 				}
@@ -75,6 +77,36 @@ public class DeustoPintxos {
 	}
 	
 	// TAREA 2D: diaMayorRecaudacion
+	private static Dia diaMayorRecaudacion(List<Bar> bares) {
+		// Aunar todas las recaudaciones de todos los bares en un mapa
+		HashMap<Dia, Double> mapa = new HashMap<>();
+		
+		for (Bar bar : bares) {
+			for (Dia dia : Dia.values()) {
+				// Cuánto hemos ganado en este bar en este día
+				double dinero = bar.getRecaudacion().get(dia);
+				// Sumar este dinero al mapa
+				if (!mapa.containsKey(dia)) {
+					mapa.put(dia, 0.0);
+				}
+				mapa.put(dia, mapa.get(dia) + dinero);
+			}
+		}
+		
+		// Calcular el mayor del mapa
+		Dia mayor_clave = Dia.LUNES;
+		Double mayor_valor = 0.0;
+		
+		for (Dia clave : mapa.keySet()) {
+			Double valor = mapa.get(clave);
+			if (valor > mayor_valor) {
+				mayor_valor = valor;
+				mayor_clave = clave;
+			}
+		}
+		
+		return mayor_clave;
+	}
 	
 	public static void main(String[] args) {
 		Set<Producto> productos = new HashSet<Producto>();
@@ -98,47 +130,14 @@ public class DeustoPintxos {
 		System.out.println(productos);
 		System.out.println(bares);
 		
-		// TAREA 2C: recorre el mapa de bares, ejecuta cobrarPedidos y muestra como ha quedado la recaudacion
-		for (Bar bar: bares) {
+		// TAREA 2C: recorre la lista de bares, ejecuta cobrarPedidos y muestra como ha quedado la recaudacion
+		for (Bar bar : bares) {
 			bar.cobrarPedidos();
+			System.out.println(bar.getNombre() + ": "+ bar.getRecaudacion());
 		}
 		
 		// TAREA 2D: diaMayorRecaudacion
 		System.out.println("El dia de mayor recaudacion ha sido el " + diaMayorRecaudacion(bares));
-	}
-
-	private static Dia diaMayorRecaudacion(List<Bar> bares) {
-		// Sumar todas las recaudaciones de cada dia en cada bar
-		HashMap<Dia, Double> diccionario = new HashMap<Dia, Double>();
-		
-		for (Bar bar : bares) {
-			for (Dia dia : Dia.values()) {
-				double totalDia = bar.getRecaudacion().get(dia);
-				double valor = 0;
-				
-				// Si había un valor previo, lo sumamos
-				if (diccionario.containsKey(dia)) {
-					valor = diccionario.get(dia);
-				}
-				
-				diccionario.put(dia, valor + totalDia);
-			}
-		}
-		
-		// Encontrar el mayor en el diccionario
-		Dia mayor_clave = Dia.LUNES;
-		double mayor_valor = 0;
-		
-		for (Dia clave : diccionario.keySet()) {
-			double valor = diccionario.get(clave);
-			
-			if (valor > mayor_valor) {
-				mayor_clave = clave;
-				mayor_valor = valor;
-			}
-		}
-		
-		return mayor_clave;
 	}
 
 	private static void datosIniciales(Set<Producto> productos, List<Bar> bares) {

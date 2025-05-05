@@ -39,18 +39,14 @@ public class Bar {
 	public void setPedidos(LinkedList<Pedido> pedidos) {
 		this.pedidos = pedidos;
 	}
-
+	
 	public HashMap<Dia, Double> getRecaudacion() {
 		return recaudacion;
 	}
 
-	public void setRecaudacion(HashMap<Dia, Double> recaudacion) {
-		this.recaudacion = recaudacion;
-	}
-
 	@Override
 	public String toString() {
-		return "Bar [nombre=" + nombre + ", pedidos=" + pedidos + ", recaudacion=" + recaudacion + "]";
+		return "Bar " + nombre + ", " + pedidos.size() + " pedidos " + recaudacion;
 	}
 
 	@Override
@@ -72,19 +68,18 @@ public class Bar {
 	
 	// TAREA 2C: metodo cobrarPedidos
 	public void cobrarPedidos() {
-		while(!this.pedidos.isEmpty()) {
-			Pedido turno = this.pedidos.removeFirst();
-			double total = turno.totalPedido();
+		// Vaciar la cola de pedidos
+		while (!pedidos.isEmpty()) {
+			Pedido turno = pedidos.removeFirst();
+			double dinero = turno.totalPedido();
 			Dia dia = turno.getDia();
-			
-			if (this.recaudacion.containsKey(dia)) {
-				// Si ya había un contador para este día sumamos lo que había y el total
-				double valor = this.recaudacion.get(dia);
-				this.recaudacion.put(dia, valor + total);
-			} else {
-				// Si no había un contador lo creamos
-				this.recaudacion.put(dia, total);
+			// Actualizar la recaudación sumando el dinero
+			// HashMap<Dia, Double> recaudacion;
+			if (!recaudacion.containsKey(dia)) {
+				recaudacion.put(dia, 0.0);
 			}
+			// Actualizamos la recaudación para este día
+			recaudacion.put(dia, recaudacion.get(dia) + dinero);
 		}
 	}
 }
