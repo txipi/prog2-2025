@@ -6,10 +6,13 @@ public class Fraccion {
 	private int numerador;
 	private int denominador;
 	
-	public Fraccion(int numerador, int denominador) {
+	public Fraccion(int numerador, int denominador) throws ArithmeticException {
 		super();
 		this.numerador = numerador;
 		this.denominador = denominador;
+		if (this.denominador == 0) {
+			throw new ArithmeticException();
+		}
 	}
 	
 	public Fraccion() {
@@ -36,8 +39,16 @@ public class Fraccion {
 		return denominador;
 	}
 
-	public void setDenominador(int denominador) {
+	public void setDenominador(int denominador) throws ArithmeticException {
 		this.denominador = denominador;
+		if (this.denominador == 0) {
+			throw new ArithmeticException();
+		}
+	}
+
+	@Override
+	public String toString() {
+		return numerador + "/" + denominador;
 	}
 
 	@Override
@@ -56,11 +67,6 @@ public class Fraccion {
 		Fraccion other = (Fraccion) obj;
 		return denominador == other.denominador && numerador == other.numerador;
 	}
-
-	@Override
-	public String toString() {
-		return numerador + "/" + denominador;
-	}
 	
 	public void sumar(Fraccion f) {
 		this.numerador = this.numerador * f.denominador + f.numerador * this.denominador;
@@ -73,19 +79,21 @@ public class Fraccion {
 		this.denominador = this.denominador * f.denominador;
 		this.simplificar();
 	}
-	
+
 	public void multiplicar(Fraccion f) {
 		this.numerador = this.numerador * f.numerador;
 		this.denominador = this.denominador * f.denominador;
+		this.simplificar();
 	}
-	
+
 	public void dividir(Fraccion f) {
 		this.numerador = this.numerador * f.denominador;
 		this.denominador = this.denominador * f.numerador;
+		this.simplificar();
 	}
-	
+
 	public void simplificar() {
-		int i = this.denominador;
+		int i = this.denominador; 
 		while (i >= 2) {
 			if (this.numerador % i == 0 && this.denominador % i == 0) {
 				this.numerador = this.numerador / i;
