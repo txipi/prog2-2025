@@ -1,7 +1,9 @@
 package finales.deustospace;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -124,39 +126,116 @@ public class DeustoSpace implements Serializable {
 
 	// TAREA 1A: cargarMisionesCSV
 	public void cargarMisionesCSV() {
-		// Leer datos desde fichero de texto
 		try {
-			// Abrir el fichero
-			File fichero = new File("misiones.csv");
-			Scanner sc = new Scanner(fichero);
+			File f = new File("misiones.csv");
+			Scanner sc = new Scanner(f);
 			
-			// Leer el fichero
 			while (sc.hasNextLine()) {
 				String linea = sc.nextLine();
 				String[] campos = linea.split(";");
-				// Creamos la nave
-				Nave nave = new Nave(campos[6], campos[7], Double.parseDouble(campos[8]), Double.parseDouble(campos[9]));
-				// Creamos la misión
-				Mision mision = new Mision(campos[0], campos[1], campos[2], Integer.parseInt(campos[3]), Integer.parseInt(campos[4]), Integer.parseInt(campos[5]));
+				
+				// campos[0-5] -> crear Mision
+				int d = Integer.parseInt(campos[3]);
+				int m = Integer.parseInt(campos[4]);
+				int a = Integer.parseInt(campos[5]);
+				Mision mision = new Mision(campos[0], campos[1], campos[2], a, m, d);
+				
+				// campos[6-9] -> crear Nave
+				double coste = Double.parseDouble(campos[8]);
+				double carga = Double.parseDouble(campos[9]);
+				Nave nave = new Nave(campos[6], campos[7], coste, carga);
+				
 				mision.setNave(nave);
+				
 				misiones.add(mision);
 			}
 			
-			// Cerrar el fichero
 			sc.close();
-		} catch (Exception e) {
-			System.err.println("Error al cargar datos desde misiones.csv");
+		} catch (IOException e) {
+			System.err.println("Error al cargar misiones.csv");
+		} catch (DateTimeException e2) {
+			System.err.println("Error, fecha incorrecta");
+		} catch (ArrayIndexOutOfBoundsException e3) {
+			System.err.println("Error, línea con campos insuficientes");
+		} catch (NumberFormatException e3) {
+			System.err.println("Error, campo numérico incorrecto");
 		}
 	}
 
 	// TAREA 1B: cargarPersonalCSV
 	public void cargarPersonalCSV() {
-		// TODO tarea 1a
+		try {
+			File f = new File("personal.csv");
+			Scanner sc = new Scanner(f);
+			
+			while (sc.hasNextLine()) {
+				String linea = sc.nextLine();
+				String[] campos = linea.split(";");
+				
+				Personal persona;
+				String nombre = campos[1];
+				String pais = campos[2];
+				
+				if (campos[0].equals("Astronauta")) {
+					// Crear Astronauta
+					ArrayList<Habilidad> habilidades = new ArrayList<Habilidad>();
+					String[] habs = campos[3].split(",");
+					for (String h : habs) {
+						Habilidad habilidad = Habilidad.valueOf(h.toUpperCase());
+						habilidades.add(habilidad);
+					}
+					persona = new Astronauta(nombre, pais, habilidades);
+				} else {
+					// Crear Tierra
+					int nivel = Integer.parseInt(campos[3]); 
+					persona = new Tierra(nombre, pais, nivel);
+				}
+				
+				personal.add(persona);
+			}
+			
+			sc.close();
+		} catch (IOException e) {
+			System.err.println("Error al cargar personal.csv");
+		}
 	}
 
 	// TAREA 1C: asignarPersonal
 	public void asignarPersonal() {
-		// TODO tarea 1a
+		for (Mision mision : misiones) {
+			// Añadir 3 astronautas a mision.getPersonal()
+			// Añadimos un Astronauta que sepa PILOTAR
+			int pos = (int) (Math.random() * this.personal.size());
+			Personal p = this.personal.get(pos);
+			while (!(p instanceof Astronauta) || !((Astronauta) p).getHabilidades().contains(Habilidad.PILOTAR) || mision.getPersonal().contains(p)) {
+				pos = (int) (Math.random() * this.personal.size());
+				p = this.personal.get(pos);
+			}
+			// Sé seguro que es Astronauta y no lo tenía
+			mision.getPersonal().add(p);
+			// Añadimos 2 astronautas más
+			for (int i = 0; i < 2; i++) {
+				pos = (int) (Math.random() * this.personal.size());
+				p = this.personal.get(pos);
+				while (!(p instanceof Astronauta) || mision.getPersonal().contains(p)) {
+					pos = (int) (Math.random() * this.personal.size());
+					p = this.personal.get(pos);
+				}
+				// Sé seguro que es Astronauta y no lo tenía
+				mision.getPersonal().add(p);
+			}
+			// Añadir 25 personal de tierra a mision.getPersonal()
+			for (int i = 0; i < 25; i++) {
+				pos = (int) (Math.random() * this.personal.size());
+				p = this.personal.get(pos);
+				while (!(p instanceof Tierra) || mision.getPersonal().contains(p)) {
+					pos = (int) (Math.random() * this.personal.size());
+					p = this.personal.get(pos);
+				}
+				// Sé seguro que es de Tierra y no lo tenía
+				mision.getPersonal().add(p);
+			}
+		}
 	}
 	
 	// TAREA 3A: costesPorPais
