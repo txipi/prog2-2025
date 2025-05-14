@@ -30,5 +30,7 @@ public class Tierra extends Personal {
 	}
 
 	// TAREA 2B: getCoste
-
+	public double getCoste() {
+		return this.nivel * 0.15;
+	}
 }

@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.DateTimeException;
 import java.util.ArrayList;
+import java.util.TreeSet;
+import java.util.TreeMap;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -13,6 +16,7 @@ import java.util.Scanner;
  */
 public class DeustoSpace implements Serializable {
 	private static final long serialVersionUID = 1L;
+	private static final String TreeMap = null;
 	private ArrayList<Mision> misiones;
 	private ArrayList<Personal> personal;
 	
@@ -202,49 +206,133 @@ public class DeustoSpace implements Serializable {
 
 	// TAREA 1C: asignarPersonal
 	public void asignarPersonal() {
-		for (Mision mision : misiones) {
-			// Añadir 3 astronautas a mision.getPersonal()
-			// Añadimos un Astronauta que sepa PILOTAR
-			int pos = (int) (Math.random() * this.personal.size());
-			Personal p = this.personal.get(pos);
-			while (!(p instanceof Astronauta) || !((Astronauta) p).getHabilidades().contains(Habilidad.PILOTAR) || mision.getPersonal().contains(p)) {
-				pos = (int) (Math.random() * this.personal.size());
-				p = this.personal.get(pos);
-			}
-			// Sé seguro que es Astronauta y no lo tenía
-			mision.getPersonal().add(p);
-			// Añadimos 2 astronautas más
-			for (int i = 0; i < 2; i++) {
-				pos = (int) (Math.random() * this.personal.size());
-				p = this.personal.get(pos);
-				while (!(p instanceof Astronauta) || mision.getPersonal().contains(p)) {
-					pos = (int) (Math.random() * this.personal.size());
-					p = this.personal.get(pos);
+		ArrayList<Personal> pilotos = new ArrayList<Personal>();
+		ArrayList<Personal> astronautas = new ArrayList<Personal>();
+		ArrayList<Personal> tierras = new ArrayList<Personal>();
+		
+		for (Personal persona : personal) {
+			if (persona instanceof Astronauta) {
+				astronautas.add(persona);
+				Astronauta astronauta = (Astronauta) persona;
+				if (astronauta.getHabilidades().contains(Habilidad.PILOTAR)) {
+					pilotos.add(astronauta);
 				}
-				// Sé seguro que es Astronauta y no lo tenía
+			} else {
+				tierras.add(persona);
+			}
+		}
+		
+		for (Mision mision : misiones) {
+			// Añadir 1 astronauta que sepa pilotar
+			int pos = (int) (Math.random() * pilotos.size());
+			mision.getPersonal().add(pilotos.get(pos));
+			// Añadir 2 astronautas no repetidos
+			for (int i = 0; i < 2; i++) {
+				do {
+					pos = (int) (Math.random() * astronautas.size());
+				} while (mision.getPersonal().contains(astronautas.get(pos)));
+				mision.getPersonal().add(astronautas.get(pos));
+			}
+			// Añadir 25 tierra
+			for (int i = 0; i < 25; i++) {
+				do {
+					pos = (int) (Math.random() * tierras.size());
+				} while (mision.getPersonal().contains(tierras.get(pos)));
+				mision.getPersonal().add(tierras.get(pos));
+			}
+		}
+	}
+	
+	public void asignarPersonalComplicado() {
+		for (Mision mision : misiones) {
+			// Añadir 3 astronautas, 1 que sepa PILOTAR
+			Personal pilotar;
+			do {
+				int pos = (int) (Math.random() * personal.size());
+				pilotar = personal.get(pos);
+			} while (!(pilotar instanceof Astronauta) || ((Astronauta) pilotar).getHabilidades().contains(Habilidad.PILOTAR));
+			mision.getPersonal().add(pilotar);
+			for (int i = 0; i < 2; i++) {
+				// Añadir un astronauta
+				Personal p;
+				do {
+					int pos = (int) (Math.random() * personal.size());
+					p = personal.get(pos);
+				} while (!(p instanceof Astronauta) || mision.getPersonal().contains(p));
 				mision.getPersonal().add(p);
 			}
-			// Añadir 25 personal de tierra a mision.getPersonal()
+			// Añadir 25 personal de tierra
 			for (int i = 0; i < 25; i++) {
-				pos = (int) (Math.random() * this.personal.size());
-				p = this.personal.get(pos);
-				while (!(p instanceof Tierra) || mision.getPersonal().contains(p)) {
-					pos = (int) (Math.random() * this.personal.size());
-					p = this.personal.get(pos);
-				}
-				// Sé seguro que es de Tierra y no lo tenía
+				// Añadir un personal de tierra
+				Personal p;
+				do {
+					int pos = (int) (Math.random() * personal.size());
+					p = personal.get(pos);
+				} while (!(p instanceof Tierra) || mision.getPersonal().contains(p));
 				mision.getPersonal().add(p);
 			}
 		}
 	}
 	
 	// TAREA 3A: costesPorPais
-	// public ... costesPorPais() {
-	// TODO tarea 3a
+	public HashMap<String, Double> costesPorPais() {
+		HashMap<String, Double> mapa = new HashMap<>();
+		
+		for (Personal p : personal) {
+			double coste = p.getCoste();
+			String pais = p.getPais();
+			
+			if (!mapa.containsKey(pais)) {
+				mapa.put(pais, 0.0);
+			}
+			
+			mapa.put(pais, mapa.get(pais) + coste);
+		}
+		
+		for (Mision mision : misiones) {
+			Nave nave = mision.getNave();
+			double coste = nave.getCoste();
+			String pais = "";
+			
+			if (nave.getProveedor().equals("Arianespace")) {
+				pais = "France";
+			} else if (nave.getProveedor().equals("SpaceX")) {
+				pais = "USA";
+			} else {
+				pais = "Russia";
+			}
+			
+			if (!mapa.containsKey(pais)) {
+				mapa.put(pais, 0.0);
+			}
+			
+			mapa.put(pais, mapa.get(pais) + coste);
+		}
+		
+		return mapa;
+	}
 
 	// TAREA 3B: destinosPorCoste
 	public void destinosPorCoste() {
-		// TODO tarea 3b
+		TreeMap<String, TreeSet<Mision>> mapa = new TreeMap<>();
+		
+		for (Mision mision : misiones) {
+			String destino = mision.getDestino();
+			
+			if (!mapa.containsKey(destino)) {
+				mapa.put(destino, new TreeSet<Mision>());
+			}
+			
+			mapa.get(destino).add(mision);
+		}
+		
+		for (String destino : mapa.keySet()) {
+			TreeSet<Mision> valor = mapa.get(destino);
+			System.out.println("Misiones a " + destino + "...");
+			for (Mision mision : valor) {
+				System.out.println(mision);
+			}
+		}
 	}
 
 }

@@ -1,5 +1,7 @@
 package finales.deustospace;
 
+import java.util.Collections;
+
 /** Clase principal de la aplicación
  */
 public class Principal {
@@ -8,21 +10,24 @@ public class Principal {
 		DeustoSpace ds = new DeustoSpace();
 
 		// TAREA 1A: cargarMisionesCSV
+		// TODO descomentar cuando esté programada
 		ds.cargarMisionesCSV();
 			
 		// TAREA 1B: cargarPersonal
 		// TODO descomentar cuando esté programada
-		// ds.cargarPersonalCSV();
+		ds.cargarPersonalCSV();
 		
 		// TAREA 1C: asignarPersonal
 		// TODO descomentar cuando esté programado
-		// ds.asignarPersonal();
+		ds.asignarPersonal();
 		
 		// DESCOMENTA ESTA LLAMADA SI NO HAS SABIDO HACER LAS TAREAS 1A+1B+1C
 		//ds.datosIniciales();
 		System.out.println(ds);
 		
 		// TAREA 2D: mostrar las misiones ordenadas por coste total
+		Collections.sort(ds.getMisiones());
+		System.out.println(ds.getMisiones());
 		// Con los datos iniciales debería mostrar primero la misión DS VI y luego II, IV, III y V 
 		
 		// TAREA 3A: costesPorPais
