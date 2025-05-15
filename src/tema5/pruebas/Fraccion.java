@@ -1,4 +1,4 @@
-package tema5.depuracion;
+package tema5.pruebas;
 
 import java.util.Objects;
 

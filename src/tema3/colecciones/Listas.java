@@ -66,5 +66,19 @@ public class Listas {
 			System.out.println(numero);
 		}
 		
+		// Calcular la media
+		int total = 0;
+		for (int num : numeros) {
+			total += num;
+		}
+		double media = total / numeros.size();
+		
+		// Encontrar el mayor
+		int mayor = numeros.get(0);
+		for (int num : numeros) {
+			if (num > mayor) {
+				mayor = num;
+			}
+		}
 	}
 }

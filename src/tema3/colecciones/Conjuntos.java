@@ -47,10 +47,11 @@ public class Conjuntos {
 		}
 		
 		// Vaciar un conjunto -> No se puede hacer así:
-		while(!nombres.isEmpty()) {
-			nombres.remove("Pablo"); // Cuidado porque tenemos que saber qué elementos había
-		}
-		
+		//while(!nombres.isEmpty()) {
+		//	nombres.remove("Pablo"); // Cuidado porque tenemos que saber qué elementos había
+		//}
+				
+		// Hay que vaciarlo así:
 		nombres.clear();
 		
 	}
