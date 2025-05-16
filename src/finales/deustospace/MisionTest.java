@@ -2,13 +2,26 @@ package finales.deustospace;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 
 class MisionTest {
 
 	@Test
 	void constructorTest() {
-		//fail("Not yet implemented");
+		Mision m1 = new Mision("m1", "USA", "IIS", 2025, 1, 1);
+		assertEquals(m1.getNombre(), "m1");
+		assertEquals(m1.getLugar(), "USA");
+		assertEquals(m1.getDestino(), "IIS");
+		assertEquals(m1.getFecha(), LocalDate.of(2025, 1, 1));
+		try {
+			Mision m2 = new Mision("m2", "France", "Marte", 2025, 31, 1);
+			fail("Fecha incorrecta y no se ha lanzado una excepción");
+		} catch (DateTimeException e) {
+			// Todo ha ido bien porque se ha lanzado la excepción
+		}
 	}
 
 	@Test
@@ -44,7 +57,10 @@ class MisionTest {
 		Tierra t2 = new Tierra("t2", "", 2);
 		m5.getPersonal().add(t1);
 		m5.getPersonal().add(t2);
-		assertEquals(3.95, m5.getCosteTotal());
+		//Este aserto da error por decimales, hay que indicar el error tolerado
+		//assertEquals(3.95, m5.getCosteTotal());
+		assertEquals(3.95, m5.getCosteTotal(), 0.001);
 	}
 
+	
 }
