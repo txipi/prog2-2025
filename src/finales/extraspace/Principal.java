@@ -6,7 +6,6 @@ public class Principal {
 
 	public static void main(String[] args) {
 		DeustoSpace ds = new DeustoSpace();
-		System.out.println(ds.generarPaisesAjenos());
 		//ds.inicDatosDePrueba(); // Comentar esta llamada si se soluciona la tarea 2A
 		ds.cargarMisionesTabs( "misiones.txt" );  // Llamada a tarea 2A
 		System.out.println( "Misiones cargadas: " + ds.getMisiones() );

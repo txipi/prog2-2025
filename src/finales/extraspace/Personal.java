@@ -68,10 +68,9 @@ public abstract class Personal implements Serializable, PaisComprobable {
 	 */
 	public abstract String aLineaTabulada();
 	
-
 	@Override
 	public boolean esPaisAjeno() {
-		return DeustoSpace.comprobarPaisAjeno(this.getPais());
+		return DeustoSpace.comprobarPaisAjeno(pais);
 	}
-
+	
 }

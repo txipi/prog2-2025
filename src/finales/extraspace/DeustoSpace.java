@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /** Clase de agencia espacial, contenedora de datos
  */
@@ -84,36 +87,50 @@ public class DeustoSpace implements Serializable {
 				String[] campos = linea.split("\t");
 				
 				if (campos[0].equals("MISION")) {
+					// Crear mision
 					Mision mision = Mision.crearDesdeLineaTabulada(linea);
 					this.misiones.add(mision);
 					ultima = mision;
 				} else if (campos[0].equals("NAVE")) {
+					// Crear nave
 					Nave nave = Nave.crearDesdeLineaTabulada(linea);
 					ultima.setNave(nave);
-				} else if (campos[0].equals("ASTRONAUTA")) {
-					Astronauta astronauta = Astronauta.crearDesdeLineaTabulada(linea);
-					this.personal.add(astronauta);
-					ultima.getPersonal().add(astronauta);
 				} else if (campos[0].equals("TIERRA")) {
+					// Crear tierra
 					Tierra tierra = Tierra.crearDesdeLineaTabulada(linea);
 					this.personal.add(tierra);
 					ultima.getPersonal().add(tierra);
-				} else {
+				} else if (campos[0].equals("ASTRONAUTA")) {
+					// Crear astronauta
+					Astronauta astronauta = Astronauta.crearDesdeLineaTabulada(linea);
+					this.personal.add(astronauta);
+					ultima.getPersonal().add(astronauta);
+				} else if (campos[0].equals("ESPECIALISTA")) {
+					// Crear especialista
 					Especialista especialista = Especialista.crearDesdeLineaTabulada(linea);
 					this.personal.add(especialista);
 					ultima.getPersonal().add(especialista);
+				} else {
+					System.out.println("No se reconoce este tipo de dato");
 				}
 			}
 			
 			sc.close();
 		} catch (IOException e) {
-			System.err.println("Error al cargar el fichero " + nombreFichero);
+			System.err.println(e);
+			System.err.println("Error de entrada/salida al leer misiones.txt");
 		} catch (NullPointerException e2) {
-			System.out.println("Error en la linea de datos");
+			System.err.println(e2);
+			System.err.println("Error al crear objeto");
 		} catch (IndexOutOfBoundsException e3) {
-			System.out.println("Faltan datos en la linea");
+			System.err.println(e3);
+			System.err.println("Error: campos insuficientes en la línea");
 		} catch (NumberFormatException e4) {
-			System.out.println("Error al convertir datos numéricos");
+			System.err.println(e4);
+			System.err.println("Error al convertir tipos de datos numéricos");
+		} catch (DateTimeException e5) {
+			System.err.println(e5);
+			System.err.println("Error al convertir fechas");
 		}
 	}
 		
@@ -126,17 +143,10 @@ public class DeustoSpace implements Serializable {
 			PrintWriter pw = new PrintWriter(nombreFichero);
 			
 			for (Mision mision : misiones) {
-				pw.println("MISION\t" + mision.getNombre() + "\t" + 
-						mision.getLugar() + "\t" + 
-						mision.getDestino() + "\t" + 
-						mision.getFecha());
-				Nave nave = mision.getNave();
-				pw.println("NAVE\t" + nave.getNombre() + "\t" + 
-						nave.getProveedor() + "\t" + 
-						nave.getCoste() + "\t" + 
-						nave.getCarga());
+				pw.println(mision.aLineasTabuladas());
+				pw.println(mision.getNave().aLineaTabulada());
 				for (Personal p : mision.getPersonal()) {
-					pw.println("PERSONAL");
+					pw.println(p.aLineaTabulada());
 				}
 			}
 			
@@ -157,7 +167,32 @@ public class DeustoSpace implements Serializable {
 	//  Matemáticas --> [43, 58, 85]
 	//  Meteorología --> [20, 61]	
 	public void comprobarDificultadEspecialidades() {
-		// TODO Tarea 2C
+		TreeMap<String, TreeSet<Integer>> mapa = new TreeMap<>();
+		
+		for (Mision mision : misiones) {
+			for (Personal p : mision.getPersonal()) {
+				if (p instanceof Especialista) {
+					String especialidad = ((Especialista) p).getEspecialidad();
+					int dificultad = ((Especialista) p).getDificultad();
+					
+					if (!mapa.containsKey(especialidad)) {
+						mapa.put(especialidad, new TreeSet<Integer>());
+					}
+					
+					mapa.get(especialidad).add(dificultad);
+				}
+			}
+		}
+		
+		for (String clave : mapa.keySet()) {
+			TreeSet<Integer> valor = mapa.get(clave);
+			ArrayList<Integer> lista = new ArrayList<Integer>(valor);
+			int max = lista.get(lista.size() - 1);
+			int min = lista.get(0);
+			if (max - min > 30) {
+				System.out.println(clave + "->" + valor);	
+			}
+		}
 	}
 
 	
@@ -171,7 +206,49 @@ public class DeustoSpace implements Serializable {
 	 * @return	Devuelve esa lista
 	 */
 	// TODO Definir e implementar generarPaisesAjenos()
+	public ArrayList<String> generarPaisesAjenosStrings() {
+		ArrayList<String> resultado = new ArrayList<String>();
+		
+		for (Mision mision : misiones) {
+			// Comprobar cada nave
+			Nave nave = mision.getNave();
+			
+			if (nave.esPaisAjeno()) {
+				resultado.add(nave.getPais());
+			}
+			
+			// Comprobar el personal
+			for (Personal p : mision.getPersonal()) {
+				if (p.esPaisAjeno()) {
+					resultado.add(p.getPais());
+				}
+			}
+		}
+		
+		return resultado;
+	}
 	
+	public ArrayList<PaisComprobable> generarPaisesAjenos() {
+		ArrayList<PaisComprobable> resultado = new ArrayList<PaisComprobable>();
+		
+		for (Mision mision : misiones) {
+			// Comprobar cada nave
+			Nave nave = mision.getNave();
+			
+			if (nave.esPaisAjeno()) {
+				resultado.add(nave);
+			}
+			
+			// Comprobar el personal
+			for (Personal p : mision.getPersonal()) {
+				if (p.esPaisAjeno()) {
+					resultado.add(p);
+				}
+			}
+		}
+		
+		return resultado;
+	}
 	
 	/** Comprobador de si un país es ajeno a la lista de países que gestiona la agencia
 	 * @param pais	Nombre de país
@@ -1078,47 +1155,5 @@ public class DeustoSpace implements Serializable {
 		personal.add(e);
 		m.getPersonal().add(e);
 	}
-
-	public ArrayList<String> generarPaisesAjenosStrings() {
-		ArrayList<String> resultado = new ArrayList<String>();
-		
-		for (Personal p : personal) {
-			if (p.esPaisAjeno()) {
-				resultado.add(p.getPais());
-			}
-		}
-		
-		for (Mision mision : misiones) {
-			if (mision.getNave() != null) {
-				if (mision.getNave().esPaisAjeno()) {
-					resultado.add(mision.getNave().getPais());
-				}
-			}
-		}
-		
-		return resultado;
-	}
 	
-	public ArrayList<PaisComprobable> generarPaisesAjenos() {
-		ArrayList<PaisComprobable> resultado = new ArrayList<PaisComprobable>();
-		
-		for (Personal p : personal) {
-			if (p.esPaisAjeno()) {
-				resultado.add(p);
-			}
-		}
-		
-		for (Mision mision : misiones) {
-			if (mision.getNave() != null) {
-				if (mision.getNave().esPaisAjeno()) {
-					resultado.add(mision.getNave());
-				}
-			}
-		}
-		
-		return resultado;
-	}
-	
-
-
 }

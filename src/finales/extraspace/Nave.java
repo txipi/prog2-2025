@@ -125,11 +125,11 @@ public class Nave implements Serializable, Subvencionable, PaisComprobable {
 	public String getPais() {
 		if (this.proveedor.equals("Arianespace")) {
 			return "France";
- 		} else if (this.proveedor.equals("SpaceX")) {
- 			return "USA";
- 		} else {
- 			return "Russia";
- 		}
+		} else if (this.proveedor.equals("SpaceX")) {
+			return "USA";
+		} else {
+			return "Russia";
+		}
 	}
 
 	@Override

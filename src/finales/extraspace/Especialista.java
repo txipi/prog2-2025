@@ -43,7 +43,11 @@ public class Especialista extends Personal {
 	 * @param especialidad	Nombre de la especialidad, si es null o string vacío se pone "Desconocida"
 	 */
 	public void setEspecialidad(String especialidad) {
-		this.especialidad = especialidad;
+		if (especialidad == null || especialidad.equals("")) {
+			this.especialidad = "Desconocida";
+		} else {
+			this.especialidad = especialidad;
+		}
 	}
 	
 	@Override

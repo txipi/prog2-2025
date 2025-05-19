@@ -163,7 +163,7 @@ public class Mision implements Serializable, Comparable<Mision> {
 	 */
 	public String aLineasTabuladas() {
 		// TODO Tarea 2B
-		return "";
+		return "MISION\t"+nombre+"\t"+lugar+"\t"+destino+"\t"+fecha;
 	}
 	
 }
