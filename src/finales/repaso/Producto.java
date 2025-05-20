@@ -1,8 +1,11 @@
 package finales.repaso;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Producto {
+public abstract class Producto implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private static int contador = 1;
 	
 	protected int codigo;
