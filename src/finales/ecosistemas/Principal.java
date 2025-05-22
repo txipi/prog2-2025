@@ -2,7 +2,10 @@ package finales.ecosistemas;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -15,44 +18,91 @@ public class Principal {
 		cargarOrganismosCSV(organismos);	
 		System.out.println(organismos);
 		
+		ecosistemas = generarEcosistemas(organismos);
 		ecosistemas = generarEcosistemasViables(organismos);
 		System.out.println(ecosistemas.get(0));
 		
 		double media = calcularEdadMaxMedia(ecosistemas.get(0));
 		System.out.println("EdadMax media del primer ecosistema: " + media);
-	}
-
-	private static double calcularEdadMaxMedia(Ecosistema ecosistema) {
-		double media = 0;
-		int contador = 0;
 		
-		for (TipoOrganismo tipo : ecosistema.getOrganismos().keySet()) {
-			ArrayList<Organismo> valor = ecosistema.getOrganismos().get(tipo);
-			
-			for (Organismo organismo : valor) {
-				media += organismo.getEdadMax();
-				contador++;
+		ecosistemas.sort(null);
+
+		guardarEcosistemas(ecosistemas);
+		
+		System.out.println(ecosistemaMasLongevo(ecosistemas));
+		
+	}
+	
+	private static void guardarEcosistemas(ArrayList<Ecosistema> ecosistemas) {
+		try {
+			FileOutputStream fos = new FileOutputStream("ecosistemas.dat");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(ecosistemas);
+			oos.close();
+			fos.close();
+		} catch (Exception e) {
+			System.err.println(e);
+		}
+	}
+	
+	private static Ecosistema ecosistemaMasLongevo(ArrayList<Ecosistema> ecosistemas) {
+		Ecosistema mayor = ecosistemas.get(0);
+		
+		for (Ecosistema ecosistema : ecosistemas) {
+			if (ecosistema.getLongevidad() > mayor.getLongevidad()) {
+				mayor = ecosistema;
 			}
 		}
 		
-		return media / contador;
+		return mayor;
+	}
+	
+	private static HashMap<Clima, ArrayList<Ecosistema>> agruparEcosistemasPorClima(ArrayList<Ecosistema> ecosistemas) {
+		HashMap<Clima, ArrayList<Ecosistema>> mapa = new HashMap<Clima, ArrayList<Ecosistema>>();
+		
+		for (Ecosistema ecosistema : ecosistemas) {
+			Clima clima = ecosistema.getClima();
+			
+			if (!mapa.containsKey(clima)) {
+				mapa.put(clima, new ArrayList<Ecosistema>());
+			}
+			
+			mapa.get(clima).add(ecosistema);
+		}
+		
+		return mapa;
+	}
+
+	private static double calcularEdadMaxMedia(Ecosistema ecosistema) {
+		HashMap<TipoOrganismo, Double> mapa = calcularEdadesMaxMedias(ecosistema);
+		
+		TipoOrganismo mayor_clave = TipoOrganismo.PLANTA;
+		Double mayor_valor = 0.0;
+		
+		for (TipoOrganismo clave : mapa.keySet()) {
+			Double valor = mapa.get(clave);
+			if (valor > mayor_valor) {
+				mayor_clave = clave;
+				mayor_valor = valor;
+			}
+		}
+		
+		return mayor_valor;
 	}
 	
 	private static HashMap<TipoOrganismo, Double> calcularEdadesMaxMedias(Ecosistema ecosistema) {
 		HashMap<TipoOrganismo, Double> medias = new HashMap<>();
-		
-		for (TipoOrganismo tipo : ecosistema.getOrganismos().keySet()) {
-			ArrayList<Organismo> valor = ecosistema.getOrganismos().get(tipo);
-			
-			double media = 0;
-			int contador = 0;
-			
+
+		for (TipoOrganismo clave : ecosistema.getOrganismos().keySet()) {
+			ArrayList<Organismo> valor = ecosistema.getOrganismos().get(clave);
+			// Calcular la media
+			double media = 0.0;
 			for (Organismo organismo : valor) {
 				media += organismo.getEdadMax();
-				contador++;
 			}
-			
-			medias.put(tipo, media/contador);
+			media = media / valor.size();
+			// Añadir la media al mapa de medias
+			medias.put(clave, media);
 		}
 		
 		return medias;
@@ -151,43 +201,55 @@ public class Principal {
 		ArrayList<Ecosistema> ecosistemas = new ArrayList<Ecosistema>();
 		
 		for (int i = 0; i < 100; i++) {
-			// agua aleatoria de 10000 a 20000 m3
-			double agua = 10000 + Math.random() * 10000;
-			// clima aleatorio entre todos los de Clima.values()
+			int agua = (int) (Math.random() * 5000) + 1000;
 			int alea = (int) (Math.random() * Clima.values().length);
 			Clima clima = Clima.values()[alea];
-			// mapa de organismos
 			HashMap<TipoOrganismo, ArrayList<Organismo>> orgs = new HashMap<>();
 			
-			for (int j = 0; j < 30; j++) {
-				// Elegir un organismo aleatorio
-				int aleat = (int) (Math.random() * organismos.size());
-				Organismo organismo = organismos.get(aleat);
-				
-				// Añadir el organismo al mapa orgs
-				TipoOrganismo tipo;
-				
-				if (organismo instanceof Planta) {
-					tipo = TipoOrganismo.PLANTA;
-				} else if (organismo instanceof Herbivoro) {
-					tipo = TipoOrganismo.HERBIVORO;
-				} else {
-					tipo = TipoOrganismo.CARNIVORO;
+			// Meter carnivoros en orgs
+			orgs.put(TipoOrganismo.CARNIVORO, new ArrayList<Organismo>());
+			for (int j = 0; j < 5; j++) {
+				Carnivoro carnivoro = null;
+				Collections.shuffle(organismos);
+				// Encontrar un carnívoro
+				for (Organismo organismo : organismos) {
+					if (organismo instanceof Carnivoro) {
+						carnivoro = (Carnivoro) organismo;
+						break;
+					}
 				}
 				
-				if (orgs.containsKey(tipo)) {
-					// Añadir el organismo a la lista orgs.get(tipo)
-					orgs.get(tipo).add(organismo);
-				} else {
-					// Crear la lista y añadir
-					orgs.put(tipo, new ArrayList<Organismo>());
-					orgs.get(tipo).add(organismo);
+				orgs.get(TipoOrganismo.CARNIVORO).add(carnivoro);
+			}
+			// Meter herbivoros en orgs
+			orgs.put(TipoOrganismo.HERBIVORO, new ArrayList<Organismo>());
+			for (int j = 0; j < 10; j++) {
+				Herbivoro herbivoro = null;
+				// Encontrar un herbivoro
+				for (Organismo organismo : organismos) {
+					if (organismo instanceof Herbivoro) {
+						herbivoro = (Herbivoro) organismo;
+						break;
+					}
 				}
-				
+				orgs.get(TipoOrganismo.HERBIVORO).add(herbivoro);
+			}
+			
+			// Meter plantas en orgs
+			orgs.put(TipoOrganismo.PLANTA, new ArrayList<Organismo>());
+			for (int j = 0; j < 15; j++) {
+				Planta planta = null;
+				// Encontrar una planta
+				for (Organismo organismo : organismos) {
+					if (organismo instanceof Planta) {
+						planta = (Planta) organismo;
+						break;
+					}
+				}
+				orgs.get(TipoOrganismo.PLANTA).add(planta);
 			}
 			
 			Ecosistema ecosistema = new Ecosistema(agua, clima, orgs);
-			
 			ecosistemas.add(ecosistema);
 		}
 		

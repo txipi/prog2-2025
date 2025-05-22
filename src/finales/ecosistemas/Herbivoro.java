@@ -11,10 +11,8 @@ public class Herbivoro extends Animal {
 		this.alimentacion = alimentacion;
 	}
 
-	public ArrayList<Organismo> getAlimentacion() {
-		// Hacemos esto para cumplir con el método abstracto, 
-		// pero puede provocar problemas porque se devuelve una copia de la lista, no la propiedad alimentación en sí
-		return new ArrayList<Organismo>(alimentacion);
+	public ArrayList<Planta> getAlimentacion() {
+		return alimentacion;
 	}
 
 	public void setAlimentacion(ArrayList<Planta> alimentacion) {
